@@ -43,9 +43,28 @@ const pushEventHandler = async (event: GitlabEventTypes.PushEvent) => {
 };
 ```
 
+## Definitions
+
+```ts
+export type WebhookEvents =
+  | PushEvent
+  | TagPushEvent
+  | IssueEvent
+  | NoteEvent
+  | MergeRequestEvent
+  | WikiPageEvent
+  | PipelineEvent
+  | BuildEvent
+  | DeploymentEvent
+  | GroupMemberEvent
+  | SubgroupEvent
+  | FeatureFlagEvent
+  | ReleaseEvent;
+```
+
 ## Credits
 
-Thanks to [excaliburhan/node-gitlab-webhook](https://github.com/excaliburhan/node-gitlab-webhook/blob/master/index.d.ts)(MIT License).
+Thanks to [excaliburhan/node-gitlab-webhook](https://github.com/excaliburhan/node-gitlab-webhook)(MIT License).
 
 ## License
 
