@@ -8,10 +8,10 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [17.x]
-        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
