@@ -1,5 +1,8 @@
 # GitLab Event Types
 
+[![Build](https://github.com/lawvs/gitlab-event-types/actions/workflows/build.yml/badge.svg)](https://github.com/lawvs/gitlab-event-types/actions/workflows/build.yml)
+[![npm](https://img.shields.io/npm/v/gitlab-event-types)](https://www.npmjs.com/package/gitlab-event-types)
+
 TypeScript definitions for [GitLab Webhook Event](https://docs.gitlab.com/ee/user/project/integrations/webhook_events.html).
 
 ## Install
