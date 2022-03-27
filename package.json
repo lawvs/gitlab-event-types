@@ -1,6 +1,6 @@
 {
   "name": "gitlab-event-types",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "gitlab webhook event types",
   "keywords": [
     "gitlab",
