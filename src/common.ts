@@ -1,3 +1,5 @@
+import { Compare, LiteralUnion } from "./utils";
+
 export interface StDiff {
   diff: string;
   new_path: string;
@@ -11,6 +13,7 @@ export interface StDiff {
 
 export interface Issue {
   id: number;
+  iid: number;
   title: string;
   assignee_ids: number[];
   assignee_id: number;
@@ -22,8 +25,8 @@ export interface Issue {
   branch_name: string;
   description: string;
   milestone_id: number;
-  state: string;
-  iid: number;
+  state: LiteralUnion<"opened">;
+  severity?: LiteralUnion<"unknown">;
 }
 
 export interface Snippet {
@@ -77,19 +80,20 @@ export interface Label {
   updated_at: string;
   template: boolean;
   description: string;
-  type: string;
+  type: LiteralUnion<"ProjectLabel">;
   group_id: number;
 }
 
 export interface Changes {
-  updated_by_id: number[];
-  updated_at: string[];
-  labels: Labels;
-}
-
-export interface Labels {
-  previous: Label[];
-  current: Label[];
+  updated_by_id: Compare<number | null>;
+  updated_at: Compare<string>;
+  draft: Compare<boolean>;
+  labels: Compare<Label[]>;
+  last_edited_at: Compare<string | null>;
+  last_edited_by_id: Compare<number | null>;
+  assignees: Compare<User[]>;
+  reviewers: Compare<User[]>;
+  description: Compare<string>;
 }
 
 export interface MergeRequest {
@@ -104,7 +108,11 @@ export interface MergeRequest {
   updated_at: string;
   milestone_id: number;
   state: string;
-  merge_status: string;
+  merge_status:
+    | "can_be_merged"
+    | "cannot_be_merged"
+    | "cannot_be_merged_recheck"
+    | "checking";
   target_project_id: number;
   iid: number;
   description: string;
@@ -114,12 +122,26 @@ export interface MergeRequest {
   last_commit: LastCommit;
   work_in_progress: boolean;
   assignee: User;
+  /**
+   * Returns merge requests which have been approved by all the users with the given `id`.
+   * Maximum of 5. `None` returns merge requests with no approvals.
+   * `Any` returns merge requests with an approval.
+   */
+  approved_by_ids?: number[];
+  /**
+   * Returns merge requests which have specified all the users with the given `id` as individual approvers.
+   * `None` returns merge requests without approvers.
+   * `Any` returns merge requests with an approver.
+   */
+  approver_ids?: number[];
 }
 
 export interface User {
+  id: number;
   name: string;
   username: string;
   avatar_url: string;
+  email?: string;
 }
 
 export interface LastCommit {

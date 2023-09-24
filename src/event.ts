@@ -13,6 +13,7 @@ import type {
   Wiki,
   Build,
 } from "./common";
+import { LiteralUnion } from "./utils";
 
 export interface PushEvent {
   object_kind: "push";
@@ -57,7 +58,7 @@ export interface IssueEvent {
   assignees: User[];
   assignee: User;
   labels: Label[];
-  changes: Changes;
+  changes: Partial<Changes>;
 }
 
 export interface IssueAttributes {
@@ -105,10 +106,10 @@ export interface NoteAttributes {
   created_at: string;
   updated_at: string;
   project_id: number;
-  attachment: any;
+  attachment: unknown;
   line_code: string;
   commit_id: string;
-  noteable_id: number;
+  noteable_id: number | null;
   system: boolean;
   st_diff: StDiff;
   url: string;
@@ -122,7 +123,9 @@ export interface MergeRequestEvent {
   repository: Repository;
   object_attributes: MergeRequestAttributes;
   labels: Label[];
-  changes: Changes;
+  changes: Partial<Changes>;
+  assignees: User[];
+  reviewers: User[];
 }
 
 export interface MergeRequestAttributes {
@@ -131,13 +134,23 @@ export interface MergeRequestAttributes {
   source_branch: string;
   source_project_id: number;
   author_id: number;
-  assignee_id: number;
+  /**
+   * @deprecated
+   */
+  assignee_id?: number;
   title: string;
   created_at: string;
   updated_at: string;
   milestone_id: null;
   state: string;
-  merge_status: string;
+  /**
+   * @deprecated
+   */
+  merge_status?:
+    | "can_be_merged"
+    | "cannot_be_merged"
+    | "cannot_be_merged_recheck"
+    | "checking";
   target_project_id: number;
   iid: number;
   description: string;
@@ -241,15 +254,10 @@ export interface SubgroupEvent {
 /**
  * WIP
  */
-export interface SubgroupEvent {
-  // TODO
-}
-
-/**
- * WIP
- */
 export interface FeatureFlagEvent {
   object_kind: "feature_flag";
+  project: Project;
+  user: User;
   // TODO
 }
 
@@ -258,9 +266,33 @@ export interface FeatureFlagEvent {
  */
 export interface ReleaseEvent {
   object_kind: "release";
+  id: number;
+  created_at: string;
+  description: string;
+  name: string;
+  tag: string;
+  project: Project;
+  url: string;
+  action: LiteralUnion<"create">;
+  assets: Record<string, unknown>;
+  commit: Commit;
   // TODO
 }
 
+export interface EmojiEvent {
+  object_kind: "emoji";
+  // event_type: "award";
+  user: User;
+  project_id: number;
+  project: Project;
+  object_attributes: Record<string, unknown>;
+  note: Record<string, unknown>;
+  issue: Issue;
+}
+
+/**
+ * See [Webhook events | Gitlab](https://docs.gitlab.com/ee/user/project/integrations/webhook_events.html)
+ */
 export type WebhookEvents =
   | PushEvent
   | TagPushEvent
@@ -274,4 +306,5 @@ export type WebhookEvents =
   | GroupMemberEvent
   | SubgroupEvent
   | FeatureFlagEvent
-  | ReleaseEvent;
+  | ReleaseEvent
+  | EmojiEvent;
