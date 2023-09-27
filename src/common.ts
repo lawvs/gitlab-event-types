@@ -85,6 +85,7 @@ export interface Label {
 }
 
 export interface Changes {
+  milestone_id: Compare<number | null>;
   updated_by_id: Compare<number | null>;
   updated_at: Compare<string>;
   draft: Compare<boolean>;
