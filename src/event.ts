@@ -64,7 +64,13 @@ export interface IssueEvent {
 export interface IssueAttributes {
   id: number;
   title: string;
+  /**
+   * @deprecated The `assignee` and `assignee_id` keys are deprecated and contain the first assignee only.
+   */
   assignee_ids: number[];
+  /**
+   * @deprecated The `assignee` and `assignee_id` keys are deprecated and contain the first assignee only.
+   */
   assignee_id: number;
   author_id: number;
   project_id: number;
@@ -130,37 +136,66 @@ export interface MergeRequestEvent {
 
 export interface MergeRequestAttributes {
   id: number;
+  iid: number;
   target_branch: string;
   source_branch: string;
   source_project_id: number;
   author_id: number;
   /**
-   * @deprecated
+   * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
    */
   assignee_id?: number;
+  assignee_ids: number[];
+  reviewer_ids: number[];
+
   title: string;
   created_at: string;
   updated_at: string;
-  milestone_id: null;
-  state: string;
+  last_edited_at: string;
+  last_edited_by_id: number;
+  milestone_id: number | null;
+  state_id: number;
+  state: "opened" | "closed" | string;
+  blocking_discussions_resolved: boolean;
+  work_in_progress: boolean;
+  draft: boolean;
+  first_contribution: boolean;
   /**
-   * @deprecated
+   * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
    */
   merge_status?:
+    | "unchecked"
     | "can_be_merged"
     | "cannot_be_merged"
     | "cannot_be_merged_recheck"
     | "checking";
   target_project_id: number;
-  iid: number;
   description: string;
+  prepared_at: string;
+  total_time_spent: number;
+  time_change: number;
+  /**
+   * @example "30m"
+   */
+  human_total_time_spent: string | null;
+  /**
+   * @example "30s"
+   */
+  human_time_change: string | null;
+  /**
+   * @example "30m"
+   */
+  human_time_estimate: string | null;
+  /**
+   * @example "http://example.com/diaspora/merge_requests/1"
+   */
+  url: string;
   source: Project;
   target: Project;
   last_commit: LastCommit;
-  work_in_progress: boolean;
-  url: string;
-  action: string;
-  assignee: User;
+  labels: Label[];
+  action: "open" | string;
+  detailed_merge_status: "checking" | "mergeable" | string;
 }
 
 export interface WikiPageEvent {
