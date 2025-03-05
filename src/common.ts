@@ -46,13 +46,13 @@ export interface Snippet {
 export interface Commit {
   id: string;
   message: string;
-  title: string;
+  title?: string;
   timestamp: string;
   url: string;
   author: Author;
-  added: string[];
-  modified: string[];
-  removed: string[];
+  added?: string[];
+  modified?: string[];
+  removed?: string[];
 }
 
 export interface Build {
