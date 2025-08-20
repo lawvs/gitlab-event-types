@@ -164,11 +164,11 @@ export interface MergeRequestAttributes {
    * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
    */
   merge_status?:
-    | "unchecked"
-    | "can_be_merged"
-    | "cannot_be_merged"
-    | "cannot_be_merged_recheck"
-    | "checking";
+  | "unchecked"
+  | "can_be_merged"
+  | "cannot_be_merged"
+  | "cannot_be_merged_recheck"
+  | "checking";
   target_project_id: number;
   description: string;
   prepared_at: string;
@@ -219,6 +219,7 @@ export interface WikiPageAttributes {
 export interface PipelineEvent {
   object_kind: "pipeline";
   object_attributes: PipelineAttributes;
+  merge_request: PipelineMergeRequest | null;
   user: User;
   project: Project;
   commit: Commit;
@@ -237,6 +238,21 @@ export interface PipelineAttributes {
   finished_at: string;
   duration: number;
 }
+
+export type PipelineMergeRequest = Pick<
+  MergeRequestAttributes,
+  'id' |
+  'iid' |
+  "title" |
+  "source_branch" |
+  "source_project_id" |
+  "target_branch" |
+  "target_project_id" |
+  "state" |
+  "merge_status" |
+  "detailed_merge_status" |
+  "url"
+>;
 
 export interface BuildEvent {
   object_kind: "build";
