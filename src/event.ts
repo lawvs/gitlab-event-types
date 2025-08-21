@@ -5,11 +5,10 @@ import type {
   User,
   Label,
   Changes,
-  MergeRequest,
+  BasesMergeRequestAttributes,
   Issue,
   Snippet,
   StDiff,
-  LastCommit,
   Wiki,
   Build,
 } from "./common";
@@ -86,28 +85,34 @@ export interface IssueAttributes {
   action: string;
 }
 
-export interface NoteEvent {
+export interface CommentEvent {
   object_kind: "note";
+  /**
+   * The `event_type` is set to `confidential_note` for confidential issues.
+   */
+  event_type: "note" | "confidential_note";
   user: User;
   project_id: number;
   project: Project;
   repository: Repository;
   object_attributes: NoteAttributes;
   commit?: Commit;
-  merge_request?: MergeRequest;
+  merge_request?: BasesMergeRequestAttributes;
   issue?: Issue;
   snippet?: Snippet;
 }
 
 /**
- * alias for NoteEvent
+ * Alias for CommentEvent
+ *
+ * @deprecated Use CommentEvent instead.
  */
-export type CommentEvent = NoteEvent;
+export type NoteEvent = CommentEvent;
 
 export interface NoteAttributes {
   id: number;
   note: string;
-  noteable_type: string;
+  noteable_type: "Commit" | "MergeRequest" | "Issue" | "Snippet";
   author_id: number;
   created_at: string;
   updated_at: string;
@@ -120,6 +125,10 @@ export interface NoteAttributes {
   st_diff: StDiff;
   url: string;
   description?: string;
+  /**
+   * `object_attributes.action` property [introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/147856) in GitLab 16.11.
+   */
+  action?: "create" | "update";
 }
 
 export interface MergeRequestEvent {
@@ -134,43 +143,14 @@ export interface MergeRequestEvent {
   reviewers: User[];
 }
 
-export interface MergeRequestAttributes {
-  id: number;
-  iid: number;
-  target_branch: string;
-  source_branch: string;
-  source_project_id: number;
-  author_id: number;
-  /**
-   * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
-   */
-  assignee_id?: number;
+export interface MergeRequestAttributes extends BasesMergeRequestAttributes {
   assignee_ids: number[];
   reviewer_ids: number[];
-
-  title: string;
-  created_at: string;
-  updated_at: string;
   last_edited_at: string;
   last_edited_by_id: number;
-  milestone_id: number | null;
   state_id: number;
-  state: "opened" | "closed" | string;
   blocking_discussions_resolved: boolean;
-  work_in_progress: boolean;
-  draft: boolean;
   first_contribution: boolean;
-  /**
-   * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
-   */
-  merge_status?:
-    | "unchecked"
-    | "can_be_merged"
-    | "cannot_be_merged"
-    | "cannot_be_merged_recheck"
-    | "checking";
-  target_project_id: number;
-  description: string;
   prepared_at: string;
   total_time_spent: number;
   time_change: number;
@@ -190,12 +170,22 @@ export interface MergeRequestAttributes {
    * @example "http://example.com/diaspora/merge_requests/1"
    */
   url: string;
-  source: Project;
-  target: Project;
-  last_commit: LastCommit;
-  labels: Label[];
-  action: "open" | string;
-  detailed_merge_status: "checking" | "mergeable" | string;
+  action:
+    | "open"
+    | "close"
+    | "reopen"
+    | "update"
+    | "approved"
+    | "unapproved"
+    | "approval"
+    | "unapproval"
+    | "merge";
+  /**
+   * The field `object_attributes.oldrev` is only available when there are actual code changes, like:
+   * - New code is pushed.
+   * - A suggestion is applied.
+   */
+  oldrev?: string;
 }
 
 export interface WikiPageEvent {
@@ -219,7 +209,7 @@ export interface WikiPageAttributes {
 export interface PipelineEvent {
   object_kind: "pipeline";
   object_attributes: PipelineAttributes;
-  merge_request: PipelineMergeRequest | null;
+  merge_request?: BasesMergeRequestAttributes;
   user: User;
   project: Project;
   commit: Commit;
@@ -238,29 +228,6 @@ export interface PipelineAttributes {
   finished_at: string;
   duration: number;
 }
-
-/**
- * @see MergeRequestAttributes
- */
-export type PipelineMergeRequest = {
-  id: number;
-  iid: number;
-  title: string;
-  source_branch: string;
-  source_project_id: number;
-  target_branch: string;
-  target_project_id: number;
-  state: "opened" | "closed" | string;
-  merge_status?:
-    | "checking"
-    | "unchecked"
-    | "can_be_merged"
-    | "cannot_be_merged"
-    | "cannot_be_merged_recheck"
-    | undefined;
-  detailed_merge_status: "checking" | "mergeable" | string;
-  url: string;
-};
 
 export interface BuildEvent {
   object_kind: "build";

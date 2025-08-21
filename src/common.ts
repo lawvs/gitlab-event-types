@@ -101,44 +101,97 @@ export interface Changes {
   description: Compare<string>;
 }
 
-export interface MergeRequest {
+/**
+ * Use `detailed_merge_status` instead of `merge_status` to account for all potential statuses.
+ *
+ * - The `detailed_merge_status` field can contain one of the following values related to the merge request:
+ *   - `approvals_syncing`: The merge request’s approvals are syncing.
+ *   - `checking`: Git is testing if a valid merge is possible.
+ *   - `ci_must_pass`: A CI/CD pipeline must succeed before merge.
+ *   - `ci_still_running`: A CI/CD pipeline is still running.
+ *   - `commits_status`: Source branch should exist, and contain commits.
+ *   - `conflict`: Conflicts exist between the source and target branches.
+ *   - `discussions_not_resolved`: All discussions must be resolved before merge.
+ *   - `draft_status`: Can’t merge because the merge request is a draft.
+ *   - `jira_association_missing`: The title or description must reference a Jira issue. To configure, see Require associated Jira issue for merge requests to be merged.
+ *   - `mergeable`: The branch can merge cleanly into the target branch.
+ *   - `merge_request_blocked`: Blocked by another merge request.
+ *   - `merge_time`: May not be merged until after the specified time.
+ *   - `need_rebase`: The merge request must be rebased.
+ *   - `not_approved`: Approval is required before merge.
+ *   - `not_open`: The merge request must be open before merge.
+ *   - `preparing`: Merge request diff is being created.
+ *   - `requested_changes`: The merge request has reviewers who have requested changes.
+ *   - `security_policy_violations`: All security policies must be satisfied.
+ *   - `status_checks_must_pass`: All status checks must pass before merge.
+ *   - `unchecked`: Git has not yet tested if a valid merge is possible.
+ *   - `locked_paths`: Paths locked by other users must be unlocked before merging to default branch.
+ *   - `locked_lfs_files`: LFS files locked by other users must be unlocked before merge.
+ *   - `title_regex`: Checks whether the title matches the expected regex, if configured in project settings.
+ *
+ * Learn more https://docs.gitlab.com/api/merge_requests/#merge-status
+ */
+export type DetailedMergeStatus =
+  | "approvals_syncing"
+  | "checking"
+  | "ci_must_pass"
+  | "ci_still_running"
+  | "commits_status"
+  | "conflict"
+  | "discussions_not_resolved"
+  | "draft_status"
+  | "jira_association_missing"
+  | "mergeable"
+  | "merge_request_blocked"
+  | "merge_time"
+  | "need_rebase"
+  | "not_approved"
+  | "not_open"
+  | "preparing"
+  | "requested_changes"
+  | "security_policy_violations"
+  | "status_checks_must_pass"
+  | "unchecked"
+  | "locked_paths"
+  | "locked_lfs_files"
+  | "title_regex";
+
+export interface BasesMergeRequestAttributes {
   id: number;
+  iid: number;
   target_branch: string;
+  target_project_id: number;
   source_branch: string;
   source_project_id: number;
   author_id: number;
-  assignee_id: number;
+  /**
+   * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
+   */
+  assignee_id?: number;
   title: string;
   created_at: string;
   updated_at: string;
-  milestone_id: number;
-  state: string;
-  merge_status:
+  milestone_id: number | null;
+  state: "opened" | "closed";
+  /**
+   * @deprecated Use `detailed_merge_status` instead of `merge_status` to account for all potential statuses.
+   */
+  merge_status?:
+    | "unchecked"
     | "can_be_merged"
     | "cannot_be_merged"
     | "cannot_be_merged_recheck"
     | "checking";
-  target_project_id: number;
-  iid: number;
+  detailed_merge_status: DetailedMergeStatus;
   description: string;
   position: number;
   source: Project;
   target: Project;
   last_commit: LastCommit;
   work_in_progress: boolean;
-  assignee: User;
-  /**
-   * Returns merge requests which have been approved by all the users with the given `id`.
-   * Maximum of 5. `None` returns merge requests with no approvals.
-   * `Any` returns merge requests with an approval.
-   */
-  approved_by_ids?: number[];
-  /**
-   * Returns merge requests which have specified all the users with the given `id` as individual approvers.
-   * `None` returns merge requests without approvers.
-   * `Any` returns merge requests with an approver.
-   */
-  approver_ids?: number[];
+  draft?: boolean;
+  assignee?: User;
+  labels?: Label[];
 }
 
 export interface User {
