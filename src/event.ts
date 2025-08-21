@@ -219,6 +219,7 @@ export interface WikiPageAttributes {
 export interface PipelineEvent {
   object_kind: "pipeline";
   object_attributes: PipelineAttributes;
+  merge_request: PipelineMergeRequest | null;
   user: User;
   project: Project;
   commit: Commit;
@@ -237,6 +238,29 @@ export interface PipelineAttributes {
   finished_at: string;
   duration: number;
 }
+
+/**
+ * @see MergeRequestAttributes
+ */
+export type PipelineMergeRequest = {
+  id: number;
+  iid: number;
+  title: string;
+  source_branch: string;
+  source_project_id: number;
+  target_branch: string;
+  target_project_id: number;
+  state: "opened" | "closed" | string;
+  merge_status?:
+    | "checking"
+    | "unchecked"
+    | "can_be_merged"
+    | "cannot_be_merged"
+    | "cannot_be_merged_recheck"
+    | undefined;
+  detailed_merge_status: "checking" | "mergeable" | string;
+  url: string;
+};
 
 export interface BuildEvent {
   object_kind: "build";
