@@ -4,30 +4,33 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+
+# https://docs.npmjs.com/trusted-publishers
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
 
 jobs:
   build:
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
         os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: "latest"
+      - uses: pnpm/action-setup@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: pnpm install
@@ -35,10 +38,10 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      # - name: Test
-      #   run: npm test
+      # Note: Trusted publishing requires npm CLI version 11.5.1 or later.
+      - name: Update npm
+        run: |
+          npm install -g npm@latest
 
       - name: Publish
         run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
