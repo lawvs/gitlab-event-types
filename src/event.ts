@@ -164,11 +164,11 @@ export interface MergeRequestAttributes {
    * @deprecated The fields `assignee_id` and `merge_status` are [deprecated](https://docs.gitlab.com/ee/api/merge_requests.html).
    */
   merge_status?:
-  | "unchecked"
-  | "can_be_merged"
-  | "cannot_be_merged"
-  | "cannot_be_merged_recheck"
-  | "checking";
+    | "unchecked"
+    | "can_be_merged"
+    | "cannot_be_merged"
+    | "cannot_be_merged_recheck"
+    | "checking";
   target_project_id: number;
   description: string;
   prepared_at: string;
@@ -239,20 +239,28 @@ export interface PipelineAttributes {
   duration: number;
 }
 
-export type PipelineMergeRequest = Pick<
-  MergeRequestAttributes,
-  'id' |
-  'iid' |
-  "title" |
-  "source_branch" |
-  "source_project_id" |
-  "target_branch" |
-  "target_project_id" |
-  "state" |
-  "merge_status" |
-  "detailed_merge_status" |
-  "url"
->;
+/**
+ * @see MergeRequestAttributes
+ */
+export type PipelineMergeRequest = {
+  id: number;
+  iid: number;
+  title: string;
+  source_branch: string;
+  source_project_id: number;
+  target_branch: string;
+  target_project_id: number;
+  state: "opened" | "closed" | string;
+  merge_status?:
+    | "checking"
+    | "unchecked"
+    | "can_be_merged"
+    | "cannot_be_merged"
+    | "cannot_be_merged_recheck"
+    | undefined;
+  detailed_merge_status: "checking" | "mergeable" | string;
+  url: string;
+};
 
 export interface BuildEvent {
   object_kind: "build";
