@@ -156,7 +156,7 @@ export type DetailedMergeStatus =
   | "locked_lfs_files"
   | "title_regex";
 
-export interface BasesMergeRequestAttributes {
+export interface BaseMergeRequestAttributes {
   id: number;
   iid: number;
   target_branch: string;

@@ -5,7 +5,7 @@ import type {
   User,
   Label,
   Changes,
-  BasesMergeRequestAttributes,
+  BaseMergeRequestAttributes,
   Issue,
   Snippet,
   StDiff,
@@ -96,7 +96,7 @@ export interface CommentEvent {
   repository: Repository;
   object_attributes: NoteAttributes;
   commit?: Commit;
-  merge_request?: BasesMergeRequestAttributes;
+  merge_request?: BaseMergeRequestAttributes;
   issue?: Issue;
   snippet?: Snippet;
 }
@@ -142,7 +142,7 @@ export interface MergeRequestEvent {
   reviewers: User[];
 }
 
-export interface MergeRequestAttributes extends BasesMergeRequestAttributes {
+export interface MergeRequestAttributes extends BaseMergeRequestAttributes {
   assignee_ids: number[];
   reviewer_ids: number[];
   last_edited_at: string;
@@ -208,7 +208,7 @@ export interface WikiPageAttributes {
 export interface PipelineEvent {
   object_kind: "pipeline";
   object_attributes: PipelineAttributes;
-  merge_request?: BasesMergeRequestAttributes;
+  merge_request?: BaseMergeRequestAttributes;
   user: User;
   project: Project;
   commit: Commit;
