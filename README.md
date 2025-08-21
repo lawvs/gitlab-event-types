@@ -50,16 +50,21 @@ export type WebhookEvents =
   | PushEvent
   | TagPushEvent
   | IssueEvent
-  | NoteEvent
+  | CommentEvent
   | MergeRequestEvent
   | WikiPageEvent
   | PipelineEvent
-  | BuildEvent
+  | JobEvent
   | DeploymentEvent
   | GroupMemberEvent
+  | ProjectEvent
   | SubgroupEvent
   | FeatureFlagEvent
-  | ReleaseEvent;
+  | ReleaseEvent
+  | MilestoneEvent
+  | EmojiEvent
+  | AccessTokenEvent
+  | VulnerabilityEvent;
 ```
 
 ## Credits

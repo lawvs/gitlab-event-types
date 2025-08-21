@@ -12,7 +12,6 @@ import type {
   Wiki,
   Build,
 } from "./common";
-import { LiteralUnion } from "./utils";
 
 export interface PushEvent {
   object_kind: "push";
@@ -229,7 +228,7 @@ export interface PipelineAttributes {
   duration: number;
 }
 
-export interface BuildEvent {
+export interface JobEvent {
   object_kind: "build";
   ref: string;
   tag: boolean;
@@ -251,9 +250,11 @@ export interface BuildEvent {
 }
 
 /**
- * alias for BuildEvent
+ * Alias for JobEvent
+ *
+ * @deprecated Use JobEvent instead.
  */
-export type JobEvent = BuildEvent;
+export type BuildEvent = JobEvent;
 
 /**
  * Deployment events are triggered when a deployment starts, succeeds, fails, or is canceled.
@@ -543,11 +544,11 @@ export type WebhookEvents =
   | PushEvent
   | TagPushEvent
   | IssueEvent
-  | NoteEvent
+  | CommentEvent
   | MergeRequestEvent
   | WikiPageEvent
   | PipelineEvent
-  | BuildEvent
+  | JobEvent
   | DeploymentEvent
   | GroupMemberEvent
   | ProjectEvent
