@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/lawvs/gitlab-event-types.git"
+    "url": "git+https://github.com/lawvs/gitlab-event-types.git"
   },
   "license": "MIT",
   "author": "lawvs",
